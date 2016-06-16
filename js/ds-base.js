@@ -17,6 +17,8 @@
   service.authenticated = authenticated;
   service.downloadObject = downloadObject;
   service.uploadObject = uploadObject;
+  service.uploadFile = uploadFile;
+  service.remove = remove;
   // jscs:disable
   /**
   * This object provides the base functionality on the window object.
@@ -287,9 +289,88 @@
       callback();
     }
   }
-  // TODO: UPLOAD FILE
-  // TODO: LIST FILES
-  // TODO: DELETE FILE
+  // jscs:disable
+  /**
+  * This function uploads a file.
+  * @method uploadFile
+  * @static
+  * @param file {Object} The file.
+  * @param callback {Function} The function callback.
+  * ```
+  * function(error)
+  *
+  * Parameters:
+  *
+  * error Integer
+  * The error code; null is success.
+  * ```
+  */
+  // jscs:enable
+  function uploadFile(file, callback) {
+    if (file === undefined || typeof file !== 'object') {
+      throw 400;
+    }
+    if (callback === undefined || typeof callback !== 'function') {
+      throw 400;
+    }
+    var formData = new window.FormData();
+    var token = window.localStorage.getItem('ds_token');
+    var xmlhttprequest = new window.XMLHttpRequest();
+    formData.append('user', _user);
+    formData.append('repo', _repo);
+    formData.append('file', file);
+    xmlhttprequest.open('POST',
+      _base + ':3010/api/upload',
+      true);
+    xmlhttprequest.setRequestHeader('Authorization',
+      'bearer ' + token);
+    xmlhttprequest.onreadystatechange = handleOnreadystatechange;
+    xmlhttprequest.send(formData);
+    function handleOnreadystatechange() {
+      if (xmlhttprequest.readyState !== 4) {
+        return;
+      }
+      if (xmlhttprequest.status !== 200) {
+        callback(500);
+      }
+      callback();
+    }
+  }
+  // TODO: DOCUMENTATION
+  function remove(filename, callback) {
+    if (filename === undefined || typeof filename !== 'string') {
+      throw 400;
+    }
+    if (callback === undefined || typeof callback !== 'function') {
+      throw 400;
+    }
+    var token = window.localStorage.getItem('ds_token');
+    var xmlhttprequest = new window.XMLHttpRequest();
+    xmlhttprequest.open('POST',
+      _base + ':3010/api/delete',
+      true);
+    xmlhttprequest.setRequestHeader('Authorization',
+      'bearer ' + token);
+    xmlhttprequest.setRequestHeader('Content-type',
+      'application/json');
+    xmlhttprequest.onreadystatechange = handleOnreadystatechange;
+    xmlhttprequest.send(window.JSON.stringify({
+      user: _user,
+      repo: _repo,
+      filename: 'example.pdf'
+    }));
+    function handleOnreadystatechange() {
+      var status = xmlhttprequest.statu;
+      if (xmlhttprequest.readyState !== 4) {
+        return;
+      }
+      if (status !== 200) {
+        callback(status);
+      }
+      callback();
+    }
+  }
+  // TODO: LIST
   function abort() {
     window.location.reload();
   }
