@@ -215,7 +215,7 @@
     var xmlhttprequest = new window.XMLHttpRequest();
     xmlhttprequest.onreadystatechange = handleOnreadystatechange;
     xmlhttprequest.open('GET',
-      '/' + _user + '-' + _repo + '-upload/' + filename,
+      '/upload/' + _user + '-' + _repo + '/' + filename,
       true);
     xmlhttprequest.send();
     function handleOnreadystatechange() {
