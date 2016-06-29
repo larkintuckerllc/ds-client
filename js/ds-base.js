@@ -143,24 +143,24 @@
     xmlhttp.onreadystatechange = onChange;
     xmlhttp.send(params);
     function onChange() {
-      if (xmlhttp.readyState === 4) {
-        if (xmlhttp.status === 200) {
-          var token;
-          try {
-            token = JSON.parse(xmlhttp.responseText).token;
-          } catch (error) {
-            return callback(500);
-          }
-          if (!token) {
-            return callback(500);
-          }
-          window.localStorage.setItem('ds_token',
-            token);
-          return callback(null);
-        } else {
-          return callback(xmlhttp.status ? xmlhttp.status : 500);
-        }
+      if (xmlhttp.readyState !== 4) {
+        return;
       }
+      if (xmlhttp.status !== 200) {
+        return callback(xmlhttp.status ? xmlhttp.status : 500);
+      }
+      var token;
+      try {
+        token = JSON.parse(xmlhttp.responseText).token;
+      } catch (error) {
+        return callback(500);
+      }
+      if (!token) {
+        return callback(500);
+      }
+      window.localStorage.setItem('ds_token',
+        token);
+      return callback(null);
     }
   }
   // jscs:disable
@@ -212,25 +212,23 @@
     if (callback === undefined || typeof callback !== 'function') {
       throw 400;
     }
-    var xmlhttprequest = new window.XMLHttpRequest();
-    xmlhttprequest.onreadystatechange = handleOnreadystatechange;
-    xmlhttprequest.open('GET',
+    var xmlhttp = new window.XMLHttpRequest();
+    xmlhttp.onreadystatechange = handleOnreadystatechange;
+    xmlhttp.open('GET',
       '/upload/' + _user + '-' + _repo + '/' + filename,
       true);
-    xmlhttprequest.send();
+    xmlhttp.send();
     function handleOnreadystatechange() {
-      var status = xmlhttprequest.status;
-      if (xmlhttprequest.readyState !== 4) {
+      if (xmlhttp.readyState !== 4) {
         return;
       }
-      if (status === 200) {
-        try {
-          callback(null, JSON.parse(xmlhttprequest.responseText));
-        } catch (error) {
-          callback(415, null);
-        }
-      } else {
-        callback(status, null);
+      if (xmlhttp.status !== 200) {
+        return callback(xmlhttp.status ? xmlhttp.status : 500);
+      }
+      try {
+        return callback(null, JSON.parse(xmlhttp.responseText));
+      } catch (error) {
+        return callback(415, null);
       }
     }
   }
@@ -268,25 +266,25 @@
     );
     var formData = new window.FormData();
     var token = window.localStorage.getItem('ds_token');
-    var xmlhttprequest = new window.XMLHttpRequest();
+    var xmlhttp = new window.XMLHttpRequest();
     formData.append('user', _user);
     formData.append('repo', _repo);
     formData.append('file', blob, filename);
-    xmlhttprequest.open('POST',
+    xmlhttp.open('POST',
       _base + ':3010/api/upload',
       true);
-    xmlhttprequest.setRequestHeader('Authorization',
+    xmlhttp.setRequestHeader('Authorization',
       'bearer ' + token);
-    xmlhttprequest.onreadystatechange = handleOnreadystatechange;
-    xmlhttprequest.send(formData);
+    xmlhttp.onreadystatechange = handleOnreadystatechange;
+    xmlhttp.send(formData);
     function handleOnreadystatechange() {
-      if (xmlhttprequest.readyState !== 4) {
+      if (xmlhttp.readyState !== 4) {
         return;
       }
-      if (xmlhttprequest.status !== 200) {
-        callback(500);
+      if (xmlhttp.status !== 200) {
+        return callback(xmlhttp.status ? xmlhttp.status : 500);
       }
-      callback();
+      return callback(null);
     }
   }
   // jscs:disable
@@ -315,25 +313,25 @@
     }
     var formData = new window.FormData();
     var token = window.localStorage.getItem('ds_token');
-    var xmlhttprequest = new window.XMLHttpRequest();
+    var xmlhttp = new window.XMLHttpRequest();
     formData.append('user', _user);
     formData.append('repo', _repo);
     formData.append('file', file);
-    xmlhttprequest.open('POST',
+    xmlhttp.open('POST',
       _base + ':3010/api/upload',
       true);
-    xmlhttprequest.setRequestHeader('Authorization',
+    xmlhttp.setRequestHeader('Authorization',
       'bearer ' + token);
-    xmlhttprequest.onreadystatechange = handleOnreadystatechange;
-    xmlhttprequest.send(formData);
+    xmlhttp.onreadystatechange = handleOnreadystatechange;
+    xmlhttp.send(formData);
     function handleOnreadystatechange() {
-      if (xmlhttprequest.readyState !== 4) {
+      if (xmlhttp.readyState !== 4) {
         return;
       }
-      if (xmlhttprequest.status !== 200) {
-        callback(500);
+      if (xmlhttp.status !== 200) {
+        return callback(xmlhttp.status ? xmlhttp.status : 500);
       }
-      callback();
+      return callback(null);
     }
   }
   // jscs:disable
@@ -361,29 +359,28 @@
       throw 400;
     }
     var token = window.localStorage.getItem('ds_token');
-    var xmlhttprequest = new window.XMLHttpRequest();
-    xmlhttprequest.open('POST',
+    var xmlhttp = new window.XMLHttpRequest();
+    xmlhttp.open('POST',
       _base + ':3010/api/delete',
       true);
-    xmlhttprequest.setRequestHeader('Authorization',
+    xmlhttp.setRequestHeader('Authorization',
       'bearer ' + token);
-    xmlhttprequest.setRequestHeader('Content-type',
+    xmlhttp.setRequestHeader('Content-type',
       'application/json');
-    xmlhttprequest.onreadystatechange = handleOnreadystatechange;
-    xmlhttprequest.send(window.JSON.stringify({
+    xmlhttp.onreadystatechange = handleOnreadystatechange;
+    xmlhttp.send(window.JSON.stringify({
       user: _user,
       repo: _repo,
       filename: 'example.pdf'
     }));
     function handleOnreadystatechange() {
-      var status = xmlhttprequest.statu;
-      if (xmlhttprequest.readyState !== 4) {
+      if (xmlhttp.readyState !== 4) {
         return;
       }
-      if (status !== 200) {
-        callback(status);
+      if (xmlhttp.status !== 200) {
+        return callback(xmlhttp.status ? xmlhttp.status : 500);
       }
-      callback();
+      return callback(null);
     }
   }
   function abort() {

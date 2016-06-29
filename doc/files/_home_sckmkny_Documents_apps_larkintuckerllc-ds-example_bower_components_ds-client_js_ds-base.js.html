@@ -233,24 +233,24 @@
     xmlhttp.onreadystatechange = onChange;
     xmlhttp.send(params);
     function onChange() {
-      if (xmlhttp.readyState === 4) {
-        if (xmlhttp.status === 200) {
-          var token;
-          try {
-            token = JSON.parse(xmlhttp.responseText).token;
-          } catch (error) {
-            return callback(500);
-          }
-          if (!token) {
-            return callback(500);
-          }
-          window.localStorage.setItem(&#x27;ds_token&#x27;,
-            token);
-          return callback(null);
-        } else {
-          return callback(xmlhttp.status ? xmlhttp.status : 500);
-        }
+      if (xmlhttp.readyState !== 4) {
+        return;
       }
+      if (xmlhttp.status !== 200) {
+        return callback(xmlhttp.status ? xmlhttp.status : 500);
+      }
+      var token;
+      try {
+        token = JSON.parse(xmlhttp.responseText).token;
+      } catch (error) {
+        return callback(500);
+      }
+      if (!token) {
+        return callback(500);
+      }
+      window.localStorage.setItem(&#x27;ds_token&#x27;,
+        token);
+      return callback(null);
     }
   }
   // jscs:disable
@@ -302,25 +302,23 @@
     if (callback === undefined || typeof callback !== &#x27;function&#x27;) {
       throw 400;
     }
-    var xmlhttprequest = new window.XMLHttpRequest();
-    xmlhttprequest.onreadystatechange = handleOnreadystatechange;
-    xmlhttprequest.open(&#x27;GET&#x27;,
+    var xmlhttp = new window.XMLHttpRequest();
+    xmlhttp.onreadystatechange = handleOnreadystatechange;
+    xmlhttp.open(&#x27;GET&#x27;,
       &#x27;/upload/&#x27; + _user + &#x27;-&#x27; + _repo + &#x27;/&#x27; + filename,
       true);
-    xmlhttprequest.send();
+    xmlhttp.send();
     function handleOnreadystatechange() {
-      var status = xmlhttprequest.status;
-      if (xmlhttprequest.readyState !== 4) {
+      if (xmlhttp.readyState !== 4) {
         return;
       }
-      if (status === 200) {
-        try {
-          callback(null, JSON.parse(xmlhttprequest.responseText));
-        } catch (error) {
-          callback(415, null);
-        }
-      } else {
-        callback(status, null);
+      if (xmlhttp.status !== 200) {
+        return callback(xmlhttp.status ? xmlhttp.status : 500);
+      }
+      try {
+        return callback(null, JSON.parse(xmlhttp.responseText));
+      } catch (error) {
+        return callback(415, null);
       }
     }
   }
@@ -358,25 +356,25 @@
     );
     var formData = new window.FormData();
     var token = window.localStorage.getItem(&#x27;ds_token&#x27;);
-    var xmlhttprequest = new window.XMLHttpRequest();
+    var xmlhttp = new window.XMLHttpRequest();
     formData.append(&#x27;user&#x27;, _user);
     formData.append(&#x27;repo&#x27;, _repo);
     formData.append(&#x27;file&#x27;, blob, filename);
-    xmlhttprequest.open(&#x27;POST&#x27;,
+    xmlhttp.open(&#x27;POST&#x27;,
       _base + &#x27;:3010/api/upload&#x27;,
       true);
-    xmlhttprequest.setRequestHeader(&#x27;Authorization&#x27;,
+    xmlhttp.setRequestHeader(&#x27;Authorization&#x27;,
       &#x27;bearer &#x27; + token);
-    xmlhttprequest.onreadystatechange = handleOnreadystatechange;
-    xmlhttprequest.send(formData);
+    xmlhttp.onreadystatechange = handleOnreadystatechange;
+    xmlhttp.send(formData);
     function handleOnreadystatechange() {
-      if (xmlhttprequest.readyState !== 4) {
+      if (xmlhttp.readyState !== 4) {
         return;
       }
-      if (xmlhttprequest.status !== 200) {
-        callback(500);
+      if (xmlhttp.status !== 200) {
+        return callback(xmlhttp.status ? xmlhttp.status : 500);
       }
-      callback();
+      return callback(null);
     }
   }
   // jscs:disable
@@ -405,25 +403,25 @@
     }
     var formData = new window.FormData();
     var token = window.localStorage.getItem(&#x27;ds_token&#x27;);
-    var xmlhttprequest = new window.XMLHttpRequest();
+    var xmlhttp = new window.XMLHttpRequest();
     formData.append(&#x27;user&#x27;, _user);
     formData.append(&#x27;repo&#x27;, _repo);
     formData.append(&#x27;file&#x27;, file);
-    xmlhttprequest.open(&#x27;POST&#x27;,
+    xmlhttp.open(&#x27;POST&#x27;,
       _base + &#x27;:3010/api/upload&#x27;,
       true);
-    xmlhttprequest.setRequestHeader(&#x27;Authorization&#x27;,
+    xmlhttp.setRequestHeader(&#x27;Authorization&#x27;,
       &#x27;bearer &#x27; + token);
-    xmlhttprequest.onreadystatechange = handleOnreadystatechange;
-    xmlhttprequest.send(formData);
+    xmlhttp.onreadystatechange = handleOnreadystatechange;
+    xmlhttp.send(formData);
     function handleOnreadystatechange() {
-      if (xmlhttprequest.readyState !== 4) {
+      if (xmlhttp.readyState !== 4) {
         return;
       }
-      if (xmlhttprequest.status !== 200) {
-        callback(500);
+      if (xmlhttp.status !== 200) {
+        return callback(xmlhttp.status ? xmlhttp.status : 500);
       }
-      callback();
+      return callback(null);
     }
   }
   // jscs:disable
@@ -451,29 +449,28 @@
       throw 400;
     }
     var token = window.localStorage.getItem(&#x27;ds_token&#x27;);
-    var xmlhttprequest = new window.XMLHttpRequest();
-    xmlhttprequest.open(&#x27;POST&#x27;,
+    var xmlhttp = new window.XMLHttpRequest();
+    xmlhttp.open(&#x27;POST&#x27;,
       _base + &#x27;:3010/api/delete&#x27;,
       true);
-    xmlhttprequest.setRequestHeader(&#x27;Authorization&#x27;,
+    xmlhttp.setRequestHeader(&#x27;Authorization&#x27;,
       &#x27;bearer &#x27; + token);
-    xmlhttprequest.setRequestHeader(&#x27;Content-type&#x27;,
+    xmlhttp.setRequestHeader(&#x27;Content-type&#x27;,
       &#x27;application/json&#x27;);
-    xmlhttprequest.onreadystatechange = handleOnreadystatechange;
-    xmlhttprequest.send(window.JSON.stringify({
+    xmlhttp.onreadystatechange = handleOnreadystatechange;
+    xmlhttp.send(window.JSON.stringify({
       user: _user,
       repo: _repo,
       filename: &#x27;example.pdf&#x27;
     }));
     function handleOnreadystatechange() {
-      var status = xmlhttprequest.statu;
-      if (xmlhttprequest.readyState !== 4) {
+      if (xmlhttp.readyState !== 4) {
         return;
       }
-      if (status !== 200) {
-        callback(status);
+      if (xmlhttp.status !== 200) {
+        return callback(xmlhttp.status ? xmlhttp.status : 500);
       }
-      callback();
+      return callback(null);
     }
   }
   function abort() {
