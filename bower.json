@@ -1,7 +1,7 @@
 {
   "name": "ds-client",
   "description": "The Digital Signage product is about building digital signage. This package provides the product's (Client) API.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": [
     "dist/ds-base.css",
     "dist/ds-base.min.js"

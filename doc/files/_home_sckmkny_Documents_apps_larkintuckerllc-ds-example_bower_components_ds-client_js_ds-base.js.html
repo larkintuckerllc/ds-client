@@ -384,6 +384,7 @@
   * @static
   * @param file {Object} The file.
   * @param callback {Function} The function callback.
+  * @param filename {String} Optional filename.
   * &#x60;&#x60;&#x60;
   * function(error)
   *
@@ -394,11 +395,14 @@
   * &#x60;&#x60;&#x60;
   */
   // jscs:enable
-  function uploadFile(file, callback) {
+  function uploadFile(file, callback, filename) {
     if (file === undefined || typeof file !== &#x27;object&#x27;) {
       throw 400;
     }
     if (callback === undefined || typeof callback !== &#x27;function&#x27;) {
+      throw 400;
+    }
+    if (filename !== undefined &amp;&amp; typeof filename !== &#x27;string&#x27;) {
       throw 400;
     }
     var formData = new window.FormData();
@@ -407,6 +411,9 @@
     formData.append(&#x27;user&#x27;, _user);
     formData.append(&#x27;repo&#x27;, _repo);
     formData.append(&#x27;file&#x27;, file);
+    if (filename !== undefined) {
+      formData.append(&#x27;filename&#x27;, filename);
+    }
     xmlhttp.open(&#x27;POST&#x27;,
       _base + &#x27;:3010/api/upload&#x27;,
       true);
