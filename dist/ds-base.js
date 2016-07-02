@@ -11,6 +11,7 @@
   var _repo;
   var service = {};
   service.setBase = setBase;
+  service.setRepo = setRepo;
   service.addAdminTools = addAdminTools;
   service.login = login;
   service.logout = logout;
@@ -33,21 +34,30 @@
   * @method setBase
   * @static
   * @param base {String} The URI.
+  */
+  // jscs:enable
+  function setBase(base) {
+    if (base === undefined || typeof base !== 'string') {
+      throw 400;
+    }
+    _base = base;
+  }
+  // jscs:disable
+  /**
+  * This function is used to set the GIT repo for the ds service.
+  * @method setRepo
+  * @static
   * @param user {String} The GIT user.
   * @param repo {String} The GIT repo.
   */
   // jscs:enable
-  function setBase(base, user, repo) {
-    if (base === undefined || typeof base !== 'string') {
-      throw 400;
-    }
+  function setRepo(user, repo) {
     if (user === undefined || typeof user !== 'string') {
       throw 400;
     }
     if (repo === undefined || typeof repo !== 'string') {
       throw 400;
     }
-    _base = base;
     _user = user;
     _repo = repo;
   }
