@@ -339,7 +339,7 @@
       if (xmlhttp.status !== 200) {
         return loginTokenCallback(xmlhttp.status ? xmlhttp.status : 500);
       }
-      window.localStorage.setItem(&#x27;thr0w_token&#x27;,
+      window.localStorage.setItem(&#x27;ds_token&#x27;,
         token);
       return loginTokenCallback(null);
     }

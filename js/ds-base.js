@@ -249,7 +249,7 @@
       if (xmlhttp.status !== 200) {
         return loginTokenCallback(xmlhttp.status ? xmlhttp.status : 500);
       }
-      window.localStorage.setItem('thr0w_token',
+      window.localStorage.setItem('ds_token',
         token);
       return loginTokenCallback(null);
     }
