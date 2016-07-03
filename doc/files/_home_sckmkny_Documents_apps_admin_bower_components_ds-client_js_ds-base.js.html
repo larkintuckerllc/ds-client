@@ -106,6 +106,8 @@
   service.login = login;
   service.logout = logout;
   service.authenticated = authenticated;
+  service.getToken = getToken;
+  service.loginToken = loginToken;
   service.downloadObject = downloadObject;
   service.uploadObject = uploadObject;
   service.uploadFile = uploadFile;
@@ -284,6 +286,63 @@
   // jscs:enable
   function authenticated() {
     return window.localStorage.getItem(&#x27;ds_token&#x27;) !== null;
+  }
+  // jscs:disable
+  /**
+  * This function returns the authentication token.
+  * @method getToken
+  * @static
+  * @return {String} Token
+  */
+  // jscs:enable
+  function getToken() {
+    return window.localStorage.getItem(&#x27;ds_token&#x27;);
+  }
+  // jscs:disable
+  /**
+  * This function is used to login using a token.
+  * @method loginToken
+  * @static
+  * @param token {String} The token.
+  * @param loginTokenCallback {Function} The callback function.
+  * &#x60;&#x60;&#x60;
+  * function(error)
+  *
+  * Parameters:
+  *
+  * error Integer
+  * The error code; null is success.
+  * &#x60;&#x60;&#x60;
+  **/
+  // jscs:enable
+  function loginToken(token, loginTokenCallback) {
+    if (token === undefined || typeof token !== &#x27;string&#x27;) {
+      throw 400;
+    }
+    if (loginTokenCallback === undefined ||
+      typeof loginTokenCallback !== &#x27;function&#x27;) {
+      throw 400;
+    }
+    var ref = _base + &#x27;:3010/api/valid&#x27;;
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open(&#x27;POST&#x27;, ref, true);
+    xmlhttp.setRequestHeader(&#x27;Authorization&#x27;,
+      &#x27;bearer &#x27; + token);
+    xmlhttp.setRequestHeader(&#x27;Content-type&#x27;,
+      &#x27;application/json&#x27;);
+    xmlhttp.onreadystatechange = handleOnreadystatechange;
+    xmlhttp.send(JSON.stringify({}));
+    function handleOnreadystatechange() {
+      if (xmlhttp.readyState !== 4) {
+        return;
+      }
+      if (xmlhttp.status !== 200) {
+        return loginTokenCallback(xmlhttp.status ? xmlhttp.status : 500);
+      }
+      window.localStorage.setItem(&#x27;thr0w_token&#x27;,
+        token);
+      return loginTokenCallback(null);
+    }
   }
   // jscs:disable
   /**

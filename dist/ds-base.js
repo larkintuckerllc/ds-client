@@ -16,6 +16,8 @@
   service.login = login;
   service.logout = logout;
   service.authenticated = authenticated;
+  service.getToken = getToken;
+  service.loginToken = loginToken;
   service.downloadObject = downloadObject;
   service.uploadObject = uploadObject;
   service.uploadFile = uploadFile;
@@ -194,6 +196,63 @@
   // jscs:enable
   function authenticated() {
     return window.localStorage.getItem('ds_token') !== null;
+  }
+  // jscs:disable
+  /**
+  * This function returns the authentication token.
+  * @method getToken
+  * @static
+  * @return {String} Token
+  */
+  // jscs:enable
+  function getToken() {
+    return window.localStorage.getItem('ds_token');
+  }
+  // jscs:disable
+  /**
+  * This function is used to login using a token.
+  * @method loginToken
+  * @static
+  * @param token {String} The token.
+  * @param loginTokenCallback {Function} The callback function.
+  * ```
+  * function(error)
+  *
+  * Parameters:
+  *
+  * error Integer
+  * The error code; null is success.
+  * ```
+  **/
+  // jscs:enable
+  function loginToken(token, loginTokenCallback) {
+    if (token === undefined || typeof token !== 'string') {
+      throw 400;
+    }
+    if (loginTokenCallback === undefined ||
+      typeof loginTokenCallback !== 'function') {
+      throw 400;
+    }
+    var ref = _base + ':3010/api/valid';
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', ref, true);
+    xmlhttp.setRequestHeader('Authorization',
+      'bearer ' + token);
+    xmlhttp.setRequestHeader('Content-type',
+      'application/json');
+    xmlhttp.onreadystatechange = handleOnreadystatechange;
+    xmlhttp.send(JSON.stringify({}));
+    function handleOnreadystatechange() {
+      if (xmlhttp.readyState !== 4) {
+        return;
+      }
+      if (xmlhttp.status !== 200) {
+        return loginTokenCallback(xmlhttp.status ? xmlhttp.status : 500);
+      }
+      window.localStorage.setItem('thr0w_token',
+        token);
+      return loginTokenCallback(null);
+    }
   }
   // jscs:disable
   /**
