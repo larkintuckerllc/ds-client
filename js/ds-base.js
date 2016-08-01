@@ -1,10 +1,8 @@
 (function() {
-  // jscs:disable
   /**
   * This module provides the core functionality.
   * @module ds-base
   */
-  // jscs:enable
   'use strict';
   var _base;
   var _user;
@@ -22,29 +20,24 @@
   service.uploadObject = uploadObject;
   service.uploadFile = uploadFile;
   service.remove = remove;
-  // jscs:disable
   /**
   * This object provides the base functionality on the window object.
   * @class ds
   * @static
   */
-  // jscs:enable
   window.ds = service;
-  // jscs:disable
   /**
   * This function is used to set the base URI for the ds service.
   * @method setBase
   * @static
   * @param base {String} The URI.
   */
-  // jscs:enable
   function setBase(base) {
     if (base === undefined || typeof base !== 'string') {
       throw 400;
     }
     _base = base;
   }
-  // jscs:disable
   /**
   * This function is used to set the GIT repo for the ds service.
   * @method setRepo
@@ -52,7 +45,6 @@
   * @param user {String} The GIT user.
   * @param repo {String} The GIT repo.
   */
-  // jscs:enable
   function setRepo(user, repo) {
     if (user === undefined || typeof user !== 'string') {
       throw 400;
@@ -63,7 +55,6 @@
     _user = user;
     _repo = repo;
   }
-  // jscs:disable
   /**
   * This function is used to add the administration tools (login, etc.) and ESC key reloads.
   * @method addAdminTools
@@ -74,7 +65,6 @@
   * function()
   * ```
   */
-  // jscs:enable
   function addAdminTools(frameEl, loginCallback) {
     if (frameEl === undefined || typeof frameEl !== 'object') {
       throw 400;
@@ -118,7 +108,6 @@
       }
     }
   }
-  // jscs:disable
   /**
   * This function logs in a user.
   * @method login
@@ -135,7 +124,6 @@
   * The error code; null is success.
   * ```
   */
-  // jscs:enable
   function login(username, password, callback) {
     if (username === undefined || typeof username !== 'string') {
       throw 400;
@@ -175,40 +163,33 @@
       return callback(null);
     }
   }
-  // jscs:disable
   /**
   * This function logs out a user.
   * @method logout
   * @static
   */
-  // jscs:enable
   function logout() {
     window.localStorage.removeItem('ds_token');
     abort();
   }
-  // jscs:disable
   /**
   * This function returns if authenticated.
   * @method authenticated
   * @static
   * @return {Boolean} If authenticated.
   */
-  // jscs:enable
   function authenticated() {
     return window.localStorage.getItem('ds_token') !== null;
   }
-  // jscs:disable
   /**
   * This function returns the authentication token.
   * @method getToken
   * @static
   * @return {String} Token
   */
-  // jscs:enable
   function getToken() {
     return window.localStorage.getItem('ds_token');
   }
-  // jscs:disable
   /**
   * This function is used to login using a token.
   * @method loginToken
@@ -224,7 +205,6 @@
   * The error code; null is success.
   * ```
   **/
-  // jscs:enable
   function loginToken(token, loginTokenCallback) {
     if (token === undefined || typeof token !== 'string') {
       throw 400;
@@ -254,7 +234,6 @@
       return loginTokenCallback(null);
     }
   }
-  // jscs:disable
   /**
   * This function downloads a JavaScript object.
   * @method downloadObject
@@ -273,7 +252,6 @@
   * The downloaded object.
   * ```
   */
-  // jscs:enable
   function downloadObject(filename, callback) {
     if (filename === undefined || typeof filename !== 'string') {
       throw 400;
@@ -301,7 +279,6 @@
       }
     }
   }
-  // jscs:disable
   /**
   * This function uploads a JavaScript object.
   * @method uploadObject
@@ -318,7 +295,6 @@
   * The error code; null is success.
   * ```
   */
-  // jscs:enable
   function uploadObject(object, filename, callback) {
     if (object === undefined || typeof object !== 'object') {
       throw 400;
@@ -356,7 +332,6 @@
       return callback(null);
     }
   }
-  // jscs:disable
   /**
   * This function uploads a file.
   * @method uploadFile
@@ -373,7 +348,6 @@
   * The error code; null is success.
   * ```
   */
-  // jscs:enable
   function uploadFile(file, callback, filename) {
     if (file === undefined || typeof file !== 'object') {
       throw 400;
@@ -410,7 +384,6 @@
       return callback(null);
     }
   }
-  // jscs:disable
   /**
   * This function removes uploads.
   * @method remove
@@ -426,7 +399,6 @@
   * The error code; null is success.
   * ```
   */
-  // jscs:enable
   function remove(filename, callback) {
     if (filename === undefined || typeof filename !== 'string') {
       throw 400;
