@@ -20,6 +20,12 @@
   service.uploadObject = uploadObject;
   service.uploadFile = uploadFile;
   service.remove = remove;
+  service.list = list;
+  service.getServerVersions = getServerVersions;
+  service.getStartup = getStartup;
+  service.setStartup = setStartup;
+  service.install = install;
+  service.update = update;
   /**
   * This object provides the base functionality on the window object.
   * @class ds
@@ -420,6 +426,245 @@
       user: _user,
       repo: _repo,
       filename: 'example.pdf'
+    }));
+    function handleOnreadystatechange() {
+      if (xmlhttp.readyState !== 4) {
+        return;
+      }
+      if (xmlhttp.status !== 200) {
+        return callback(xmlhttp.status ? xmlhttp.status : 500);
+      }
+      return callback(null);
+    }
+  }
+  /**
+  * This function lists apps
+  * @method list
+  * @static
+  * @param callback {Function} The function callback.
+  * ```
+  * function(error, apps)
+  *
+  * Parameters:
+  *
+  * error Integer
+  * The error code; null is success.
+  *
+  * apps Array
+  * The apps
+  * ```
+  */
+  function list(callback) {
+    var token = window.localStorage.getItem('ds_token');
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', _base + ':3010/api/list', true);
+    xmlhttp.setRequestHeader('Authorization',
+      'bearer ' + token);
+    xmlhttp.setRequestHeader('Content-type',
+      'application/json');
+    xmlhttp.onreadystatechange = handleOnreadystatechange;
+    xmlhttp.send(JSON.stringify({}));
+    function handleOnreadystatechange() {
+      if (xmlhttp.readyState !== 4) {
+        return;
+      }
+      if (xmlhttp.status !== 200) {
+        return callback(xmlhttp.status ? xmlhttp.status : 500);
+      }
+      var apps;
+      try {
+        apps = JSON.parse(xmlhttp.responseText);
+      } catch (error) {
+        return callback(500);
+      }
+      return callback(null, apps);
+    }
+  }
+  /**
+  * This function lists apps
+  * @method getServerVersions
+  * @static
+  * @param callback {Function} The function callback.
+  * ```
+  * function(error, serverVersions)
+  *
+  * Parameters:
+  *
+  * error Integer
+  * The error code; null is success.
+  *
+  * apps Object
+  * The server versions.
+  * ```
+  */
+  function getServerVersions(callback) {
+    var token = window.localStorage.getItem('ds_token');
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', _base + ':3010/api/server_versions', true);
+    xmlhttp.setRequestHeader('Authorization',
+      'bearer ' + token);
+    xmlhttp.setRequestHeader('Content-type',
+      'application/json');
+    xmlhttp.onreadystatechange = handleOnreadystatechange;
+    xmlhttp.send(JSON.stringify({}));
+    function handleOnreadystatechange() {
+      if (xmlhttp.readyState !== 4) {
+        return;
+      }
+      if (xmlhttp.status !== 200) {
+        return callback(xmlhttp.status ? xmlhttp.status : 500);
+      }
+      try {
+        return callback(null, JSON.parse(xmlhttp.responseText));
+      } catch (error) {
+        return callback(500);
+      }
+    }
+  }
+  /**
+  * This function returns the startup Url
+  * @method getStartup
+  * @static
+  * @param callback {Function} The function callback.
+  * ```
+  * function(error, url)
+  *
+  * Parameters:
+  *
+  * error Integer
+  * The error code; null is success.
+  *
+  * startupUrl String
+  * The startup Url.
+  * ```
+  */
+  function getStartup(callback) {
+    var token = window.localStorage.getItem('ds_token');
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('GET', _base + ':3010/api/startup', true);
+    xmlhttp.setRequestHeader('Authorization',
+      'bearer ' + token);
+    xmlhttp.onreadystatechange = handleOnreadystatechange;
+    xmlhttp.send();
+    function handleOnreadystatechange() {
+      if (xmlhttp.readyState !== 4) {
+        return;
+      }
+      if (xmlhttp.status !== 200) {
+        return callback(xmlhttp.status ? xmlhttp.status : 500);
+      }
+      var startupUrl;
+      try {
+        startupUrl = JSON.parse(xmlhttp.responseText).startup;
+      } catch (error) {
+        return callback(500);
+      }
+      return callback(null, startupUrl);
+    }
+  }
+  /**
+  * This function returns the startup Url
+  * @method setStartup
+  * @static
+  * @param startupUrl {String} The startup Url.
+  * @param callback {Function} The function callback.
+  * ```
+  * function(error)
+  *
+  * Parameters:
+  *
+  * error Integer
+  * The error code; null is success.
+  * ```
+  */
+  function setStartup(startupUrl, callback) {
+    var token = window.localStorage.getItem('ds_token');
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', _base + ':3010/api/startup', true);
+    xmlhttp.setRequestHeader('Authorization',
+      'bearer ' + token);
+    xmlhttp.setRequestHeader('Content-type',
+      'application/json');
+    xmlhttp.onreadystatechange = handleOnreadystatechange;
+    xmlhttp.send(JSON.stringify({
+      startup: startupUrl}));
+    function handleOnreadystatechange() {
+      if (xmlhttp.readyState !== 4) {
+        return;
+      }
+      if (xmlhttp.status !== 200) {
+        return callback(xmlhttp.status ? xmlhttp.status : 500);
+      }
+      return callback(null);
+    }
+  }
+  /**
+  * This function updates the app.
+  * @method update
+  * @static
+  * @param user {String} The uses.
+  * @param repo {String} The repo.
+  * @param callback {Function} The function callback.
+  * ```
+  * function(error)
+  *
+  * Parameters:
+  *
+  * error Integer
+  * The error code; null is success.
+  * ```
+  */
+  function update(user, repo, callback) {
+    var token = window.localStorage.getItem('ds_token');
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', _base + ':3010/api/update', true);
+    xmlhttp.setRequestHeader('Authorization',
+      'bearer ' + token);
+    xmlhttp.setRequestHeader('Content-type',
+      'application/json');
+    xmlhttp.onreadystatechange = handleOnreadystatechange;
+    xmlhttp.send(JSON.stringify({
+      user: user,
+      repo: repo
+    }));
+    function handleOnreadystatechange() {
+      if (xmlhttp.readyState !== 4) {
+        return;
+      }
+      if (xmlhttp.status !== 200) {
+        return callback(xmlhttp.status ? xmlhttp.status : 500);
+      }
+      return callback(null);
+    }
+  }
+  /**
+  * This function installs the app.
+  * @method install
+  * @static
+  * @param user {String} The uses.
+  * @param repo {String} The repo.
+  * @param callback {Function} The function callback.
+  * ```
+  * function(error)
+  *
+  * Parameters:
+  *
+  * error Integer
+  * The error code; null is success.
+  * ```
+  */
+  function install(user, repo, callback) {
+    var token = window.localStorage.getItem('ds_token');
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', _base + ':3010/api/install', true);
+    xmlhttp.setRequestHeader('Authorization',
+      'bearer ' + token);
+    xmlhttp.setRequestHeader('Content-type',
+      'application/json');
+    xmlhttp.onreadystatechange = handleOnreadystatechange;
+    xmlhttp.send(JSON.stringify({
+      user: user,
+      repo: repo
     }));
     function handleOnreadystatechange() {
       if (xmlhttp.readyState !== 4) {
